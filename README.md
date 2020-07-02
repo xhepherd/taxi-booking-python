@@ -63,7 +63,7 @@ $ pip install -r dev-requirements.txt
 
 To run unit tests, you can use PyTest as following:
 ```bash
-$ pytest
+$ python -m pytest
 ```
 ### Black Box Tests
 To run basic tests against API server

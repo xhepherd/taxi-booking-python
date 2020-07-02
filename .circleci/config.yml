@@ -16,7 +16,7 @@ jobs:
       - python/save-cache:
           dependency-file: dev-requirements.txt
       - run:
-          command: pytest
+          command: python -m pytest
           name: Test
 
 workflows:
