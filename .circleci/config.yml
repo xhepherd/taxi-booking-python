@@ -1,0 +1,25 @@
+version: 2.1
+
+orbs:
+  python: circleci/python@0.3.0
+
+
+jobs:
+  build-and-test:
+    executor: python/default
+    steps:
+      - checkout
+      - python/load-cache:
+          dependency-file: dev-requirements.txt
+      - python/install-deps:
+          dependency-file: dev-requirements.txt
+      - python/save-cache:
+          dependency-file: dev-requirements.txt
+      - run:
+          command: pytest
+          name: Test
+
+workflows:
+  main:
+    jobs:
+      - build-and-test
