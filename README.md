@@ -21,8 +21,9 @@ A simple RESTful Web API for booking taxi which includes booking, incrementing t
 ## TODO Items
 
 - Improve logging
-- Improve Readme itself with proper API documentation in table format
-- Add more test coverage for API
+- Improve exception handling
+- Enforce Python and Flask best practices (static code analysis tests)
+- Static code analysis tests for vulnerabilities
 
 ## Environment
 ### Install Dependencies
@@ -62,7 +63,6 @@ $ pip install -r dev-requirements.txt
 
 To run unit tests, you can use PyTest as following:
 ```bash
-$ python basic_solution_checker.py
 $ pytest
 ```
 ### Black Box Tests
@@ -89,58 +89,78 @@ Pick the nearest available taxi to the customer location and return the total ti
 ```json
 {
   "source": {
-    "x": x1,
-    "y": y1
+    "x": "x1",
+    "y": "y1"
   },
   "destination": {
-    "x": x2,
-    "y": y2
+    "x": "x2",
+    "y": "y2"
   }
 }
 ```
+|**Parameter**|**Description**|
+|---|---|
+|Source|`x` and `y` axis of customer current location|
+|Destination|`x` and `y` axis of customer desitnation|
+
 #### Response Payload with available taxi
 ```json
 {
-  "car_id": id,
-  "total_time": t
+  "car_id": "id",
+  "total_time": "t"
 }
 ```
+|**Parameter**|**Description**|
+|---|---|
+|Car ID|ID of the nearest booked car.|
+|Total Time|Time taken to travel from the current taxi location to customer location then to customer destination.|
+
+
 #### Response Payload with unavailable taxi
-```json
-{}
-```
+`No Content`
+
 #### Response Status Codes
 |**Code**|**Description**|
 |---|---|
 |`201`|Taxi Available|
-|`200`|Taxi Unavailable|
+|`204`|Taxi Unavailable|
 |`400`|Request payload invalid|
 
 ### Tick
 Advance service time stamp by 1 time unit for booked taxis.
 This also mark booked taxis available which complete their destination by this time unit. 
+
 #### HTTP Request
 `POST /api/tick`
+
 #### Request Payload
 `None`
+
 #### Response Payload
-`{}`
-### Response Status Code
-|**Code**|**Description**|
-|---|---|
-|`201`|Booked taxis advanced by 1 time unit|
-### Reset
-Reset all taxis data back to the initial state regardless of cars that are currently booked 
-#### HTTP Request
-`PUT /api/reset`
-#### Request Payload
-`None`
-#### Response Payload
-`{}`
+`No Content`
+
 #### Response Status Code
 |**Code**|**Description**|
 |---|---|
-|`200`|Reset all taxis data|
+|`204`|Booked taxis advanced by 1 time unit|
+
+### Reset
+Reset all taxis data back to the initial state regardless of cars that are currently booked 
+
+#### HTTP Request
+`PUT /api/reset`
+
+#### Request Payload
+`None`
+
+#### Response Payload
+`No Content`
+
+#### Response Status Code
+|**Code**|**Description**|
+|---|---|
+|`204`|Reset all taxis data|
+
 ### API Error Codes
 |**Code**|**Description**|
 |---|---|

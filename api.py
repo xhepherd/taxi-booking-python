@@ -29,7 +29,10 @@ init_taxis()
 @app.errorhandler(Exception)
 def handle_error(e):
     status_code = 500
-    return jsonify(error=str(e)), status_code
+    ## TODO items
+    ## Log Errors to a file or log errors to Error Reporting service
+    print(jsonify(error=str(e)))
+    return jsonify(error="Server error, please try again later."), status_code
 
 @app.route('/api')
 def home():
@@ -38,6 +41,8 @@ def home():
 @app.route('/api/book', methods=['POST'])
 def book():
     global taxis
+    taxi_id = None
+    total_time = None
     if request.method == 'POST':
         data = request.json
         source = data.get('source', None)
@@ -51,13 +56,11 @@ def book():
         total_time = book.total_time
         taxis = book.taxis
 
-        response = {}
-        status_code = 200
-        if taxi_id != None:
-            response = { 'car_id': taxi_id, 'total_time': total_time }
-            status_code = 201
+        if taxi_id == None:
+            return '', 204
+        else:
+            return jsonify({ 'car_id': taxi_id, 'total_time': total_time }),201
 
-        return jsonify(response), status_code
 
 @app.route('/api/tick', methods=['POST'])
 def tick():
@@ -69,10 +72,11 @@ def tick():
             jt = [json.loads(taxi.toJson()) for taxi in taxis]
 
     if False:
+        ## Breakpoint
         # code.interact(local=dict(globals(), **locals()))
         return jsonify(jt), 201
     else:
-        return jsonify({}), 201
+        return '', 204
     
 
 @app.route('/api/reset', methods=['PUT'])
@@ -80,7 +84,7 @@ def reset():
     if request.method == 'PUT':
         init_taxis()
 
-    return jsonify({}), 200
+    return '', 204
 
 
 if __name__ == '__main__':
