@@ -24,6 +24,12 @@ def test_booking_when_all_taxis_available():
     init_taxis()
     book = Book(taxis, source, destination)
     assert book.taxi_id == 1
+
+
+def test_booking_total_time():
+    global taxis
+    init_taxis()
+    book = Book(taxis, source, destination)
     assert book.total_time == 4
 
 
