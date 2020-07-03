@@ -1,4 +1,6 @@
 import json
+from location import Location
+
 
 class Book:
 
@@ -6,7 +8,8 @@ class Book:
         self._taxis = taxis
         self._source = source
         self._destination = destination
-        self._source_to_desitnation = self.__find_time(self._source, self._destination)
+        self._source_to_desitnation = self.__find_time(
+            self._source, self._destination)
         self._taxi_to_source = 0
         self._nearest_taxi_id = None
         self.__find_nearest_taxi()
@@ -20,15 +23,15 @@ class Book:
     @property
     def total_time(self):
         return self._total_time
-    
+
     @property
     def taxis(self):
         return self._taxis
 
     def __update_taxis(self):
-        self._taxis = map(self.__update_taxi, self._taxis)
+        self._taxis = [self.__book_taxi(taxi) for taxi in self._taxis]
 
-    def __update_taxi(self, taxi):
+    def __book_taxi(self, taxi):
         if taxi.id == self._nearest_taxi_id:
             taxi.booked_time = self._total_time
             # update origin to desitnation to simplify logic

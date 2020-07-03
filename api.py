@@ -1,6 +1,7 @@
 # coding=utf-8
 from flask import Flask, jsonify, request, abort
 import json
+import code
 from book import Book
 from taxi import Taxi
 from time_tick import TimeTick
@@ -8,38 +9,42 @@ from location import Location
 
 app = Flask('taxi-booking-api')
 app.config.from_object('config')
-debug = app.config['DEBUG']
-if debug:
-    import code
 
 total_taxis = app.config['NUMBER_OF_TAXIS']
-default_settings_taxi = app.config['DEFAULT_SETTINGS_TAXI']
+default_taxi_settings = app.config['DEFAULT_TAXI_SETTINGS']
 
+# List to store Taxis Instances
 taxis = []
 
+
 def init_taxis():
+    '''
+    Initiate Taxi Instances and store it in taxis list
+    '''
     global taxis
     taxis = []
     for i in range(total_taxis):
-        taxi = Taxi(i+1, default_settings_taxi)
+        taxi = Taxi(i + 1, default_taxi_settings)
         taxis.append(taxi)
 
-init_taxis()
 
 @app.errorhandler(Exception)
 def handle_error(e):
-    status_code = 500
-    ## TODO items
-    ## Log Errors to a file or log errors to Error Reporting service
-    print(jsonify(error=str(e)))
-    return jsonify(error="Server error, please try again later."), status_code
+    error = json.dumps({
+        "code": e.code,
+        "name": e.name,
+        "description": e.description,
+    })
+    print(error)
+    return jsonify(error="Server error, please try again later."), 500
 
-@app.route('/api')
-def home():
-    return jsonify(taxis), 200
 
 @app.route('/api/book', methods=['POST'])
 def book():
+    """
+    Books the nearest taxi and returns taxi id and total time to destination
+    {"car_id": 1, "total_time": 4}
+    """
     global taxis
     taxi_id = None
     total_time = None
@@ -59,33 +64,32 @@ def book():
         if taxi_id == None:
             return '', 204
         else:
-            return jsonify({ 'car_id': taxi_id, 'total_time': total_time }),201
+            return jsonify({'car_id': taxi_id, 'total_time': total_time}), 201
 
 
 @app.route('/api/tick', methods=['POST'])
 def tick():
+    """
+    Advance service time stamp by 1 time unit for booked taxis.
+    """
     global taxis
-    jt = []
     if request.method == 'POST':
         taxis = TimeTick(taxis).taxis
-        if debug:
-            jt = [json.loads(taxi.toJson()) for taxi in taxis]
 
-    if False:
-        ## Breakpoint
-        # code.interact(local=dict(globals(), **locals()))
-        return jsonify(jt), 201
-    else:
-        return '', 204
-    
+    return '', 204
+
 
 @app.route('/api/reset', methods=['PUT'])
 def reset():
+    """
+    Reset all taxis data back to the initial state regardless of taxis that are currently booked
+    """
     if request.method == 'PUT':
         init_taxis()
 
     return '', 204
 
+init_taxis()
 
 if __name__ == '__main__':
-    app.run(debug=debug, port=8080)
+    app.run(port=8080)

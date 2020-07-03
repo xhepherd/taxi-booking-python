@@ -7,9 +7,9 @@ class TimeTick:
     @property
     def taxis(self):
         return self._taxis
-    
+
     def __update_taxis(self):
-        self._taxis = map(self.__update_taxi_time, self._taxis)
+        self._taxis = [self.__update_taxi_time(taxi) for taxi in self._taxis]
 
     def __update_taxi_time(self, taxi):
         if taxi.is_booked:

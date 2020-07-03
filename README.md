@@ -11,7 +11,7 @@ A simple RESTful Web API for booking taxi which includes booking, incrementing t
 ### Assumptions
 
 - No authentication or login is required
-- Logging to console instead of file to keep it simple.
+- The APIs will be triggered **serially** hence it is not handling concurrent API calls/data races.
 
 ### Design Choices
 
@@ -20,10 +20,11 @@ A simple RESTful Web API for booking taxi which includes booking, incrementing t
 
 ## TODO Items
 
-- Improve logging
-- Improve exception handling
-- Enforce Python and Flask best practices (static code analysis tests)
-- Static code analysis tests for vulnerabilities
+- Improve logging & exception handling
+- Improve directory structure using Flask best practices
+- Add static code analysis tests
+  - to enforce Python and Flask best practices
+  - detect vulnerabilities
 
 ## Environment
 ### Install Dependencies
@@ -145,7 +146,7 @@ This also mark booked taxis available which complete their destination by this t
 |`204`|Booked taxis advanced by 1 time unit|
 
 ### Reset
-Reset all taxis data back to the initial state regardless of cars that are currently booked 
+Reset all taxis data back to the initial state regardless of taxis that are currently booked
 
 #### HTTP Request
 `PUT /api/reset`
