@@ -46,13 +46,13 @@ def book():
         source = Location(data.get('source', None))
         destination = Location(data.get('destination', None))
 
-        book = FindTaxi(taxis, source, destination)
-        taxi_id = book.taxi_id
-        total_time = book.total_time
+        taxi = FindTaxi(taxis, source, destination)
 
-        if taxi_id == None:
+        if not taxi.found:
             return '', 204
         else:
+            taxi_id = taxi.taxi_id
+            total_time = taxi.total_time
             Book(taxis, taxi_id, total_time, destination)
             return jsonify({'car_id': taxi_id, 'total_time': total_time}), 201
 
