@@ -1,10 +1,14 @@
 # Taxi Booking Python API
 
-A simple RESTful Web API for booking taxi which includes booking, incrementing time units and reseting taxis location and availability endpoints.
+A simple RESTful Web API for booking taxi system in a **2D grid world** which includes endpoints for following functions
+- Book nearest available taxi
+- Increment time units for enroute taxis
+- Reset all taxis to default settings
 
-- Project is developed in Python3
+Project is
+- Developed in Python3
 - Uses Flask framework for Routing
-- Pytest for test coverage
+- Uses Pytest for test coverage
 
 ## Assumptions and Design Choices
 
@@ -17,11 +21,14 @@ A simple RESTful Web API for booking taxi which includes booking, incrementing t
 
 - Used flask as its light weight
 - Used in-memory storage with key-value data structure
+- Using dictionary object to store data for fast lookup
+  - Time complexity to update a booked car with ID is O(1)
+- Caching the dict view as a list for faster iteration when finding a taxi or updating time
 
 ## TODO Items
 
 - Improve logging & exception handling
-- Improve directory structure using Flask best practices
+- (Maybe) Use separate lists for booked and available taxi ids for faster iterations when finding a taxi or updating time
 - Add static code analysis tests
   - to enforce Python and Flask best practices
   - detect vulnerabilities
@@ -39,7 +46,7 @@ $ source YOUR_ENVIRONMENT_DIRECTORY/bin/activate
 $ pip install -r requirements.pip
 ```
 ### Database
-Not using any persistent storage instead data is stored in-memory which is in key-value data structure.
+Not using any persistent storage instead data is stored in-memory in form of key value pairs.
 
 ## How to run
 

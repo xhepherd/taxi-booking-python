@@ -2,9 +2,10 @@
 from flask import Flask, jsonify, request, abort
 import json
 import code
-from book import Book
 from taxi import Taxi
-from time_tick import TimeTick
+from taxis import Taxis
+from find_taxi import FindTaxi
+from update_taxis import Book, UpdateTime
 from location import Location
 
 app = Flask('taxi-booking-api')
@@ -14,18 +15,7 @@ total_taxis = app.config['NUMBER_OF_TAXIS']
 default_taxi_settings = app.config['DEFAULT_TAXI_SETTINGS']
 
 # List to store Taxis Instances
-taxis = []
-
-
-def init_taxis():
-    '''
-    Initiate Taxi Instances and store it in taxis list
-    '''
-    global taxis
-    taxis = []
-    for i in range(total_taxis):
-        taxi = Taxi(i + 1, default_taxi_settings)
-        taxis.append(taxi)
+taxis = Taxis(total_taxis, default_taxi_settings)
 
 
 @app.errorhandler(Exception)
@@ -50,20 +40,20 @@ def book():
     total_time = None
     if request.method == 'POST':
         data = request.json
-        source = data.get('source', None)
-        destination = data.get('destination', None)
+        """
+        TODO: Add validation for required params
+        """
+        source = Location(data.get('source', None))
+        destination = Location(data.get('destination', None))
 
-        if not source or not destination:
-            return jsonify(error="The fields 'source' and 'destination' are required"), 400
-
-        book = Book(taxis, Location(source), Location(destination))
+        book = FindTaxi(taxis, source, destination)
         taxi_id = book.taxi_id
         total_time = book.total_time
-        taxis = book.taxis
 
         if taxi_id == None:
             return '', 204
         else:
+            Book(taxis, taxi_id, total_time, destination)
             return jsonify({'car_id': taxi_id, 'total_time': total_time}), 201
 
 
@@ -74,7 +64,7 @@ def tick():
     """
     global taxis
     if request.method == 'POST':
-        taxis = TimeTick(taxis).taxis
+        UpdateTime(taxis)
 
     return '', 204
 
@@ -85,11 +75,10 @@ def reset():
     Reset all taxis data back to the initial state regardless of taxis that are currently booked
     """
     if request.method == 'PUT':
-        init_taxis()
+        taxis.reset()
 
     return '', 204
 
-init_taxis()
 
 if __name__ == '__main__':
     app.run(port=8080)

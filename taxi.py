@@ -4,9 +4,6 @@ from location import Location
 
 class Taxi:
 
-    AVAILABILITY = True
-    BOOKED_TIME = 0
-
     def __init__(self, id, default_settings):
         self._id = id
         self.booked_time = default_settings['booked_time']
