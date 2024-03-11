@@ -173,3 +173,6 @@ Reset all taxis data back to the initial state regardless of taxis that are curr
 |**Code**|**Description**|
 |---|---|
 |`500`|Internal Server Error|
+
+
+Note: This is developed as trial project in Python. 
